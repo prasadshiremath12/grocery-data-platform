@@ -76,7 +76,7 @@ def run(argv=None):
 
             parsed = (
                 p
-                | f"Read {name}" >> beam.io.ReadFromText(path, skip_header_lines=1)
+                | f"Read {name}" >> beam.io.ReadFromParquet(path, skip_header_lines=1)
                 | f"Parse {name}" >> beam.ParDo(ParseCsvRow(name, header)).with_outputs("dead", main="ok")
             )
             good = parsed.ok
