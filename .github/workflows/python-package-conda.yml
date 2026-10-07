@@ -1,0 +1,50 @@
+name: Grocery Data Platform CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run DAG & Pipeline Tests
+        run: |
+          pytest tests/
+
+  deploy-to-composer:
+    needs: test-and-validate
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Sync DAGs and SQL Files to Cloud Composer GCS Bucket
+        run: |
+          gcloud storage rsync -r dags/ gs://${{ secrets.GCP_COMPOSER_BUCKET }}/dags/
+          gcloud storage rsync -r sql/ gs://${{ secrets.GCP_COMPOSER_BUCKET }}/dags/sql/
+          gcloud storage rsync -r pipeline/ gs://${{ secrets.GCP_COMPOSER_BUCKET }}/dags/pipeline/
