@@ -1,0 +1,13 @@
+# Sensitive keys and environment files
+.env
+keys/
+*.json
+
+# Virtual environment and cache
+venv/
+__pycache__/
+.pytest_cache/
+
+# Local data files and logs
+data/
+*.log
