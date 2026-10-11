@@ -128,7 +128,7 @@ def load_dag_module():
 def build_graph():
     if REAL:
         from airflow.models import DagBag
-        bag = DagBag(dag_folder=str(DAG_FILE.parent), include_examples=False)
+        bag = DagBag(dag_folder=str(DAG_FILE.parent))
         assert not bag.import_errors, bag.import_errors
         dag = bag.dags["grocery_daily_batch"]
         return {t.task_id: {d for d in t.downstream_task_ids} for t in dag.tasks}
