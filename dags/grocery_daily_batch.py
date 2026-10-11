@@ -33,7 +33,7 @@ from airflow.providers.google.cloud.operators.bigquery import (
     BigQueryCreateEmptyDatasetOperator,
     BigQueryInsertJobOperator,
 )
-from airflow.providers.google.cloud.operators.dataflow import DataflowCreatePythonJobOperator
+from airflow.providers.google.cloud.operators.dataflow import DataflowStartPythonJobOperator
 from airflow.providers.google.cloud.sensors.gcs import GCSObjectExistenceSensor
 from airflow.utils.task_group import TaskGroup
 from airflow.utils.trigger_rule import TriggerRule
@@ -213,7 +213,7 @@ with DAG(
         }
         if DATAFLOW_SA:
             opts["service_account_email"] = DATAFLOW_SA
-        return DataflowCreatePythonJobOperator(
+        return DataflowStartPythonJobOperator(
             task_id=task_id,
             py_file=str(PLATFORM_DIR / "pipeline_launcher.py"),
             job_name=f"grocery-{task_id.replace('_', '-')}-{{{{ ds_nodash }}}}",
