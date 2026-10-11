@@ -36,7 +36,7 @@ from airflow.providers.google.cloud.operators.bigquery import (
 try:
     from airflow.providers.google.cloud.operators.dataflow import DataflowStartPythonJobOperator
 except ImportError:
-    from airflow.providers.google.cloud.operators.dataflow import DataflowCreatePythonJobOperator as DataflowStartPythonJobOperator
+    from airflow.providers.google.cloud.operators.dataflow import BeamRunPythonPipelineOperator as DataflowStartPythonJobOperator
 from airflow.providers.google.cloud.sensors.gcs import GCSObjectExistenceSensor
 from airflow.utils.task_group import TaskGroup
 from airflow.utils.trigger_rule import TriggerRule
